@@ -1,0 +1,7 @@
+env.sh
+*.p8
+*.pem
+data/
+*.csv
+.claude/tool-log.txt
+.DS_Store
