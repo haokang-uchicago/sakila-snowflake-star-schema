@@ -6,19 +6,15 @@ The rule of the whole project: *the code is cheap; numbers that reconcile are wh
 
 ## The idea in one picture
 
-```
-Cloud SQL (MySQL 8.0)                    Snowflake
-  sakila, 16 tables ──gcloud export──▶ CSV ──PUT/COPY INTO──▶ SAKILA.OLTP  (16 tables, 47,268 rows = source)
-                                                                   │  STAGING views (one row per entity + row hash)
-                                                                   ▼  MERGE (idempotent)
-                                                              SAKILA.DW
-                                     DIM_DATE · DIM_STORE · DIM_STAFF · DIM_CUSTOMER (SCD2) · DIM_FILM (SCD2)
-                                                     └──────────── FACT_PAYMENT ────────────┘
-                                                         one row per payment · 16,044 rows · $67,406.56
-                                                                   │
-                         Streamlit in Snowflake (reads DW; "Check" recomputes every number from OLTP)
-                         Claude Code agent: user CLAUDE_AGENT, role CLAUDE_RO (SELECT only), via `snow sql -c claude`
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/migration-dark.png">
+  <img alt="Export from Cloud SQL, load into Snowflake with 16/16 tables matching, model a star schema with MERGE, a self-checking Streamlit app and a read-only Claude agent" src="assets/migration-light.png" width="100%">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/star-schema-dark.png">
+  <img alt="Star schema: FACT_PAYMENT (one row per payment) with DIM_DATE, DIM_STORE, DIM_STAFF, and SCD Type 2 DIM_CUSTOMER and DIM_FILM" src="assets/star-schema-light.png" width="100%">
+</picture>
 
 ## What's in here
 
@@ -32,6 +28,12 @@ Cloud SQL (MySQL 8.0)                    Snowflake
 | AI disclosure | `prompts.md` | 30-row prompt log for the whole assignment: what I asked, what came back, how I checked it, where Claude was wrong |
 
 ## Results
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/results-dark.png">
+  <img alt="Row counts match for all 16 tables; the star schema keeps history (US $4,110.32 vs $4,229.00); a naive actor join inflates revenue 5.45x" src="assets/results-light.png" width="100%">
+</picture>
+
 
 **Migration parity:** 16/16 tables MATCH, 47,268 = 47,268 rows; 0 duplicate primary keys in 16 tables; 0 orphans across 22 foreign keys; 13/13 value checks equal (payment total $67,406.56, 183 open rentals, staff photo 36,365 bytes and still a valid PNG). Then the Cloud SQL instance and bucket were deleted (`Listed 0 items`).
 
@@ -88,6 +90,6 @@ The Week 4 class kit used in Part 5 (setup script, Claude Code settings/hooks, t
 
 ## Context
 
-Built for **ADSP 31011 Cloud-Native Data Engineering** (UChicago MS in Applied Data Science, Autumn 2026). Claude Code was my pair programmer; every prompt, mistake and fix is in `prompts.md`. Private under the course's academic-integrity policy, shared on request. Continues [cloud-sql-sakila-deploy](https://github.com/haokang-uchicago/cloud-sql-sakila-deploy) and [sakila-sql-modeling-and-query-plans](https://github.com/haokang-uchicago/sakila-sql-modeling-and-query-plans); followed by [sakila-mcp-server-streamlit](https://github.com/haokang-uchicago/sakila-mcp-server-streamlit).
+Built for **ADSP 31011 Cloud-Native Data Engineering** (UChicago MS in Applied Data Science, Autumn 2026). Claude Code was my pair programmer; every prompt, mistake and fix is in `prompts.md`. Published with the instructor's permission to showcase the work. Continues [cloud-sql-sakila-deploy](https://github.com/haokang-uchicago/cloud-sql-sakila-deploy) and [sakila-sql-modeling-and-query-plans](https://github.com/haokang-uchicago/sakila-sql-modeling-and-query-plans); followed by [sakila-mcp-server-streamlit](https://github.com/haokang-uchicago/sakila-mcp-server-streamlit).
 
 **Hao Kang** · [LinkedIn](https://www.linkedin.com/in/hao-kang-6654b5331/) · [GitHub](https://github.com/haokang-uchicago)
